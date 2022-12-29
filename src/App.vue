@@ -16,12 +16,12 @@
     <div :class="['all_info',{'height-20px':showArrow}]">
       <div>
         总投注
-        <span>327.32</span>
+        <span>{{betScoreSum}}</span>
       </div>
-      <div>
-        总输/赢
+      <!-- <div>
+        总输赢
         <span>32(-50)</span>
-      </div>
+      </div> -->
       <van-icon @click="changeArrowSow()" v-show="!showArrow" class="closeIcon" name="back-top" />
       <van-icon class="closeIcon"  @click="changeArrowSow()" v-show="showArrow" name="down" />
     </div>
@@ -32,11 +32,11 @@
    <div class="table_main">
       <div class="table_head">注单号：20239943848458483</div>
         <div class="main_wrapper" >
-
+          {{$t('100001')}}
         </div>
    </div>
 
-
+<van-pagination v-model="currentPage" :page-count="12" mode="simple" />
 
   </div>
   <van-popup v-model="showPicker" round position="bottom">
@@ -62,32 +62,80 @@
 
 <script>
 import moment from "moment";
+import { getList } from "./api/index.js";
 export default {
   data() {
     return {
       showArrow: false,
       showPicker: false,
       showPickerRight: false,
-      columns: ["ALL GAME", "Fishing", "Live", "Sports", "SLOT"],
+      columns: [
+        "ALL-GAME",
+        "FH",
+        "TABLE",
+        "LIVE",
+        "ESPORTS",
+        "OTHER",
+        "100-PEOPLE",
+        "SOLT"
+      ],
       columnsRight: ["Today", "Yester day", "Past 7 day", "Period"],
       selectLeft: "ALL GAME",
       selectRight: "Today",
       sureDate: [],
       showDate: false,
       minDate: new Date(1900, 1, 1, 0, 0, 0),
-      maxDate: new Date(2099, 12, 31, 59, 59, 59)
+      maxDate: new Date(2099, 12, 31, 59, 59, 59),
+      betScoreSum: 0,
+      dataColumns: {
+        "ALL-GAME": "",
+        FH: "0",
+        TABLE: "4",
+        LIVE: "10",
+        ESPORTS: "11",
+        OTHER: "2",
+        "100-PEOPLE": "3",
+        SOLT: "1"
+      },
+      currentPage: 1
     };
   },
   mounted() {
-    this.sureDate[0] = moment(new Date()).format("YYYY-MM-DD");
-    this.sureDate[1] = moment(new Date()).format("YYYY-MM-DD");
+    const end = new Date();
+    const start = new Date();
+    start.setTime(start.getTime() - 3600 * 1000 * 24);
+    this.sureDate.push(moment(start).format("YYYY-MM-DD"));
+    this.sureDate.push(moment(end).format("YYYY-MM-DD"));
+    this.getData();
   },
   methods: {
+    getData() {
+      getList({
+        page: 1,
+        per_page: 20,
+        user_id: 463499,
+        gt: this.dataColumns[this.selectLeft],
+        date_start: this.sureDate[0],
+        date_end: this.sureDate[1]
+      })
+        .then(res => {
+          if (res.data.code == 200) {
+            console.log(res.data);
+            this.betScoreSum = res.data.data.betScoreSum;
+          } else {
+            this.$toast.fail(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     changeArrowSow() {
       this.showArrow = !this.showArrow;
     },
     onConfirm(value) {
       this.selectLeft = value;
+      this.getData();
       this.showPicker = false;
     },
     openPopLeft() {
@@ -138,7 +186,6 @@ export default {
   border-bottom: 2px solid #36095c;
   position: relative;
   overflow: hidden;
-  height: 64px;
   transition: all 0.5s;
 }
 .all_info > div {
@@ -171,7 +218,7 @@ export default {
   color: #ffffff;
 }
 .nav_list > div {
-  width: 100px;
+  width: 120px;
   display: flex;
   justify-content: space-between;
 }
@@ -198,8 +245,19 @@ export default {
 }
 .table_main {
   border: 1px solid #36095c;
+  margin-bottom: 20px;
 }
 .main_wrapper {
   padding: 20px;
+}
+.van-pagination__item--disabled,
+.van-pagination__item--disabled:active {
+  background-color: #36095c !important;
+}
+.van-pagination__item:active {
+  background: transparent !important;
+}
+.van-pagination__page-desc {
+  color: #fff !important;
 }
 </style>
