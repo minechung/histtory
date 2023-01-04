@@ -15,7 +15,7 @@
     </div>
     <div :class="['all_info',{'height-20px':showArrow}]">
       <div>
-        总投注
+        Total Bets
         <span >{{betScoreSum}}</span>
       </div>
       <!-- <div>
@@ -35,7 +35,7 @@
           <!-- {{$t('100001')}} -->
           <div class="left_data">
             <div>{{v.BetTime}}</div>
-            <div>{{columnsData[v.LogType]}}</div>
+            <div class="platform">{{columnsData[v.LogType]}}<div> |</div> {{v.Platform}}</div>
             <div>{{$t(v.ServerID)}}</div>
             <div style="margin-bottom:0">BET：{{v.BetScore}}</div>
           </div>
@@ -43,10 +43,10 @@
             <div>
               <van-button size="small" color="#7232dd">{{v.StatusName}}</van-button>
             </div>
-            <div v-if="v.WinScore!==0" class="BetScore">
+            <div v-if="v.WinScore!==0 && v.Status==5"  class="BetScore">
               {{v.WinScore}}
             </div>
-             <div v-if="v.WinScore==0" class="BetScoreLoss">
+             <div v-if="v.WinScore==0 && v.Status==5"  class="BetScoreLoss">
               -{{v.BetScore}}
             </div>
           </div>
@@ -114,7 +114,7 @@ export default {
         "100-PEOPLE",
         "SOLT"
       ],
-      columnsRight: ["Today", "Yester day", "Past 7 day", "Period"],
+      columnsRight: ["Today", "Yesterday", "Past 7 day", "Period"],
       selectLeft: "ALL GAME",
       selectRight: "Today",
       sureDate: [],
@@ -153,7 +153,7 @@ export default {
     this.userId = location.search.split("=")[1];
     const end = new Date();
     const start = new Date();
-    end.setTime(start.getTime() + 3600 * 1000 * 24);
+    end.setTime(start.getTime());
     this.minDate = new Date(
       moment(start.getTime() - 3600 * 1000 * 24 * 6).format("YYYY-MM-DD")
     );
@@ -218,7 +218,7 @@ export default {
           this.sureDate = [];
           const end = new Date();
           const start = new Date();
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 2);
+          start.setTime(start.getTime() - 3600 * 1000 * 24);
           end.setTime(end.getTime() - 3600 * 1000 * 24);
           this.sureDate.push(moment(start).format("YYYY-MM-DD"));
           this.sureDate.push(moment(end).format("YYYY-MM-DD"));
@@ -237,7 +237,7 @@ export default {
           this.sureDate = [];
           const end = new Date();
           const start = new Date();
-          end.setTime(start.getTime() + 3600 * 1000 * 24);
+          end.setTime(start.getTime());
           this.sureDate.push(moment(start).format("YYYY-MM-DD"));
           this.currentPage = 1;
           this.sureDate.push(moment(end).format("YYYY-MM-DD"));
@@ -415,5 +415,13 @@ export default {
   font-size: 20px;
   font-weight: 600;
   color: #ff0033;
+}
+.platform {
+  display: flex;
+  align-items: center;
+}
+.platform > div {
+  margin: 0 6px;
+  padding-bottom: 2px;
 }
 </style>
