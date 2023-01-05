@@ -111,7 +111,7 @@ export default {
         "LIVE",
         "SPORTS",
         "OTHER",
-        "100-PEOPLE",
+        "Board game",
         "SOLT"
       ],
       columnsRight: ["Today", "Yesterday", "Past 7 day", "Period"],
@@ -129,16 +129,17 @@ export default {
         LIVE: "10",
         SPORTS: "11",
         OTHER: "2",
-        "100-PEOPLE": "3",
+        "Board game": "3",
         SOLT: "1"
       },
       columnsData: {
         "0": "FH",
         "4": "TABLE",
-        "10": "LIVE",
+        "10": "LIVE", 
+        
         "11": "SPORTS",
         "2": "OTHER",
-        "3": "100-PEOPLE",
+        "3": "Board game",
         "1": "SOLT"
       },
       currentPage: 1,
