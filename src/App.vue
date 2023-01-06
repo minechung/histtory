@@ -56,7 +56,7 @@
     <img src="./assets/no.png" alt="">
   </div>
   <div  v-if="tableData.length!==0">
-<van-pagination v-model="currentPage" @change="pageChange" :total-items="total" :items-per-page="10"  mode="simple" />
+<van-pagination v-model="currentPage" @change="pageChange" :total-items="total" :items-per-page="50"  mode="simple" />
   </div>
 
 
@@ -97,7 +97,7 @@
 
 <script>
 import moment from "moment";
-import { getList } from "./api/index.js";
+import { getList, recordSum } from "./api/index.js";
 export default {
   data() {
     return {
@@ -135,8 +135,8 @@ export default {
       columnsData: {
         "0": "FH",
         "4": "TABLE",
-        "10": "LIVE", 
-        
+        "10": "LIVE",
+
         "11": "SPORTS",
         "2": "OTHER",
         "3": "Board game",
@@ -151,6 +151,7 @@ export default {
     };
   },
   mounted() {
+    location.href = "uniwebview://OnOpenWebView";
     this.userId = location.search.split("=")[1];
     const end = new Date();
     const start = new Date();
@@ -165,6 +166,7 @@ export default {
 
     this.sureDate.push(moment(end).format("YYYY-MM-DD"));
     this.getData(1);
+    this.getTotalData();
   },
   methods: {
     getData(e) {
@@ -172,7 +174,7 @@ export default {
       this.tableData = [];
       getList({
         page: e,
-        per_page: 10,
+        per_page: 50,
         user_id: this.userId,
         gt: this.dataColumns[this.selectLeft],
         date_start: this.sureDate[0],
@@ -183,7 +185,6 @@ export default {
             for (let v of res.data.data.data) {
               v.BetTime = moment(v.BetTime).format("YYYY-MM-DD HH:mm:ss");
             }
-            this.betScoreSum = res.data.data.betScoreSum;
             this.total = res.data.data.total;
             this.tableData = res.data.data.data;
             this.show = false;
@@ -203,6 +204,7 @@ export default {
     onConfirm(value) {
       this.selectLeft = value;
       this.getData(1);
+      this.getTotalData();
       this.showPicker = false;
     },
     openPopLeft() {
@@ -211,11 +213,27 @@ export default {
     openPopRight() {
       this.showPickerRight = true;
     },
+    getTotalData() {
+      recordSum({
+        user_id: this.userId,
+        gt: this.dataColumns[this.selectLeft],
+        date_start: this.sureDate[0],
+        date_end: this.sureDate[1]
+      })
+        .then(res => {
+          if (res.data.code == 200) {
+            this.betScoreSum = res.data.data.betScoreSum;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     onConfirmRight(value) {
       this.selectRight = value;
       this.showPickerRight = false;
       if (value !== "Period") {
-        if (value == "Yester day") {
+        if (value == "Yesterday") {
           this.sureDate = [];
           const end = new Date();
           const start = new Date();
@@ -225,6 +243,7 @@ export default {
           this.sureDate.push(moment(end).format("YYYY-MM-DD"));
           this.currentPage = 1;
           this.getData(1);
+          this.getTotalData();
         } else if (value == "Past 7 day") {
           this.sureDate = [];
           const end = new Date();
@@ -234,6 +253,7 @@ export default {
           this.sureDate.push(moment(end).format("YYYY-MM-DD"));
           this.currentPage = 1;
           this.getData(1);
+          this.getTotalData();
         } else if (value == "Today") {
           this.sureDate = [];
           const end = new Date();
@@ -243,6 +263,7 @@ export default {
           this.currentPage = 1;
           this.sureDate.push(moment(end).format("YYYY-MM-DD"));
           this.getData(1);
+          this.getTotalData();
         }
       }
     },
@@ -252,6 +273,7 @@ export default {
       this.showDate = false;
       this.currentPage = 1;
       this.getData(1);
+      this.getTotalData();
     },
     pageChange(e) {
       this.currentPage = e;
