@@ -123,7 +123,7 @@ export default {
       maxDate: new Date(),
       betScoreSum: 0,
       dataColumns: {
-        "ALL-GAME": "",
+        "ALL-GAME": "-1",
         FH: "0",
         TABLE: "4",
         LIVE: "10",
