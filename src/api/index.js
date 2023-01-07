@@ -1,5 +1,5 @@
 import axios from "axios";
-var url='https://007.czgame.xyz:2087/api/game/record'
+var url='https://007.czgame.xyz:2087/api/game'
 // var url = 'https://ttt.czgame.xyz:2087/api/game'
 export function getList(data) {
     return axios({

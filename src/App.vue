@@ -115,7 +115,7 @@ export default {
         "SOLT"
       ],
       columnsRight: ["Today", "Yesterday", "Past 7 day", "Period"],
-      selectLeft: "ALL GAME",
+      selectLeft: "ALL-GAME",
       selectRight: "Today",
       sureDate: [],
       showDate: false,
