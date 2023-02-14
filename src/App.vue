@@ -136,7 +136,6 @@ export default {
         "0": "FH",
         "4": "TABLE",
         "10": "LIVE",
-
         "11": "SPORTS",
         "2": "OTHER",
         "3": "Board game",
