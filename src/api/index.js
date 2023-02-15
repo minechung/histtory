@@ -15,5 +15,5 @@ export function recordSum(data) {
         url: url + '/recordSum',
         method: 'POST',
         data: data
-    })
+    })                                                                                                                                                                                                                                                                                               
 }
